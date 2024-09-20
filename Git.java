@@ -18,7 +18,7 @@ public class Git {
             index.createNewFile();
         }
     }
-    private static void deleteRepo() {
+    public static void deleteRepo() {
         if ((new File("git/objects").exists() && new File("git", "index").exists())) {
             File index = new File("git", "index");
             File objects = new File("git/objects");
@@ -26,6 +26,6 @@ public class Git {
             index.delete(); objects.delete(); gitDirectory.delete();
             System.out.println("Git Repository deleted");
         }
-        System.out.println("Git Repository does not exist");
+        else System.out.println("Git Repository does not exist");
     }
 }
