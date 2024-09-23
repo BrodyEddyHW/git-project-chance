@@ -1,9 +1,18 @@
 import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Formatter;
+import java.util.Scanner;
 
 public class Blob {
-    String fileContents;
+    String fileName, fileContents, hash;
+
     public Blob (String inputFile) throws IOException {
+        fileName = inputFile;
         fileContents = getFileContents(inputFile);
+        hash = hashContents();
+        copyFileToObjects();
+        writeToIndexFile();
     }
 
     public String getFileContents(String inputFile) throws IOException {
@@ -19,8 +28,66 @@ public class Blob {
         return fileContents;
     }
 
-    //TODO figure this out, stackoverflow has one but not sure if thats allowed...
+    public void copyFileToObjects() throws IOException {
+        File file = new File("git" + File.separator + "objects" + File.separator + hash.toString());
+        try (Writer writer = new FileWriter(file)) {
+            writer.write(fileContents);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeToIndexFile() throws IOException {
+        File index = new File("index");
+        try (FileWriter writer = new FileWriter(index, true)) {
+            writer.write(hash.toString() + " " + fileName);
+            writer.write("\n");
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // public boolean scanForFile() {
+    //     Scanner scanner = new Scanner("index");
+    //     String currentLine;
+    //     currentLine = currentLine = scanner.readLine();
+    //     while() {
+    //         if(currentLine.equals(hash.toString() + " " + fileName)) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
+    
     public String hashContents() {
-        return "";
+        String sha1 = "";
+        try {
+            MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+            crypt.reset();
+            crypt.update(fileContents.getBytes("UTF-8"));
+            sha1 = byteToHex(crypt.digest());
+        }
+        catch(NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        catch(UnsupportedEncodingException e){
+        e.printStackTrace();
+        }
+        return sha1;
+    }
+
+    private static String byteToHex(final byte[] hash) {
+        Formatter formatter = new Formatter();
+        for (byte b : hash) {
+            formatter.format("%02x", b);
+        }
+        String result = formatter.toString();
+        formatter.close();
+        return result;
+    }
+
+    public String getHash() {
+        return hash;
     }
 }

@@ -16,6 +16,7 @@ public class Git {
             index.createNewFile();
         }
     }
+    
     public static void deleteRepo() {
         if ((new File("git/objects").exists() && new File("git", "index").exists())) {
             File index = new File("git", "index");
