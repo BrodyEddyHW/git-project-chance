@@ -2,7 +2,6 @@ import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
-import java.util.Scanner;
 
 public class Blob {
     String fileName, fileContents, hash;
@@ -47,18 +46,6 @@ public class Blob {
             e.printStackTrace();
         }
     }
-
-    // public boolean scanForFile() {
-    //     Scanner scanner = new Scanner("index");
-    //     String currentLine;
-    //     currentLine = currentLine = scanner.readLine();
-    //     while() {
-    //         if(currentLine.equals(hash.toString() + " " + fileName)) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
     
     public String hashContents() {
         String sha1 = "";
