@@ -6,7 +6,7 @@ public class GitTester {
         // Git.initRepo(); // Should output "Git Repository already exists"
         // Git.deleteRepo(); // Should output "Git Repository deleted"
 
-        Blob blob = new Blob("inputText.txt");
-        Blob blb = new Blob("input2.txt");
+        String fileName = "inputText.txt";
+        Blob blob = new Blob(fileName);
     }
 }
