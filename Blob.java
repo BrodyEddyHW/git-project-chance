@@ -14,7 +14,7 @@ public class Blob {
         writeToIndexFile();
     }
 
-    public String getFileContents(String inputFile) throws IOException {
+    public static String getFileContents(String inputFile) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(inputFile));
         String fileContents = "";
         while (reader.ready()) {
