@@ -46,6 +46,5 @@ public class GitTester {
         else {
             System.out.println("Blob content doesn't work");
         }
-        new File("test.txt").delete();
     }
 }

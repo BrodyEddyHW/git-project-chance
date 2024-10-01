@@ -3,20 +3,25 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
+import java.util.zip.GZIPOutputStream;
 
 public class Blob {
     String fileName, fileContents, hash;
+    boolean compression = true;
 
     public Blob(String inputFile) throws IOException {
         fileName = inputFile;
+        if (compression) {
+            compressFileContents(inputFile);
+        }
         fileContents = getFileContents(inputFile);
         hash = hashContents();
         copyFileToObjects();
-        writeToIndexFile();
+        writeToIndexFile(inputFile, inputFile);
     }
 
     // Efficiently read file contents using StringBuilder and correct newline character
-    public String getFileContents(String inputFile) throws IOException {
+    public static String getFileContents(String inputFile) throws IOException {
         StringBuilder fileContents = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
             String line;
@@ -27,12 +32,31 @@ public class Blob {
         return fileContents.toString().trim();  // Trim to remove the last unnecessary newline
     }
 
-    // Ensure the parent directory exists before creating the file
+    public static void compressFileContents (String inputFile) {
+        byte[] buffer = new byte[1024]; 
+        try { 
+            GZIPOutputStream os = new GZIPOutputStream(new FileOutputStream(inputFile));             
+            FileInputStream in = new FileInputStream(inputFile);
+            int totalSize; 
+            while((totalSize = in.read(buffer)) > 0 ) { 
+                os.write(buffer, 0, totalSize); 
+            } 
+            in.close(); 
+            os.finish(); 
+            os.close();
+        } 
+        catch (IOException e) 
+        { 
+            e.printStackTrace(); 
+        }
+    }
+
     public void copyFileToObjects() throws IOException {
         File file = new File("git" + File.separator + "objects" + File.separator + hash);
         file.getParentFile().mkdirs();  // Ensure that the directory exists
         try (Writer writer = new FileWriter(file)) {
             writer.write(fileContents);
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
