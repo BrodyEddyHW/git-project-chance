@@ -3,17 +3,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class TreeTester {
-
-    public static void main(String[] args) {
-        try {
-            String root = "testRoot";
-            setup(root);
-            Tree tree = new Tree();
-            tree.addDirectory(root);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void main(String[] args) throws IOException {
+        String root = "testRoot";
+        setup(root);
+        Tree tree = new Tree();
+        tree.addDirectory(root);
     }
 
     private static void setup(String rootPath) throws IOException {
@@ -37,7 +31,7 @@ public class TreeTester {
         }
         newFile(subSubDir + "/file5.txt", "This is file 5 in subSubDir");
     }
-    
+
     private static void newFile(String filePath, String content) throws IOException {
         File file = new File(filePath);
         try (FileWriter writer = new FileWriter(file)) {
