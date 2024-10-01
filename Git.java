@@ -6,13 +6,13 @@ public class Git {
         initRepo();
         deleteRepo();
     }
-
-    public static void initRepo() throws IOException {
-        if (new File("git/objects").exists() && new File("git", "index").exists()) {
+    public static void initRepo () throws IOException {
+        if (new File("git" + File.separator + "objects").exists() && new File("git", "index").exists()) {
             System.out.println("Git Repository already exists");
-        } else {
-            new File("git/objects").mkdirs();  // Create the git/objects directory
-            File directory = new File("git");
+        }
+        else {
+            new File("git" + File.separator + "objects").mkdirs();
+            File directory = new File ("git");
             File index = new File(directory, "index");
             index.createNewFile();  // Create the index file
             System.out.println("Git Repository initialized");
@@ -20,16 +20,14 @@ public class Git {
     }
 
     public static void deleteRepo() {
-        File objects = new File("git/objects");
+        File objects = new File("git" + File.separator + "objects");
         File index = new File("git", "index");
-        File gitDirectory = new File("git");
-
         if (objects.exists() && index.exists()) {
-            index.delete();  // Delete the index file
             deleteDirectory(objects);
-            gitDirectory.delete();  
+            index.delete();
             System.out.println("Git Repository deleted");
-        } else {
+        } 
+        else {
             System.out.println("Git Repository does not exist");
         }
     }
@@ -42,7 +40,6 @@ public class Git {
                 if (file.isDirectory()) {
                     deleteDirectory(file); 
                 } else {
-                    file.delete();
                 }
             }
         }
