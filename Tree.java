@@ -67,7 +67,7 @@ public class Tree {
 
     // Part 1 requirement
     private void writeToIndexFile(String type, String path, String hash) throws IOException {
-        File index = new File("index");
+        File index = new File("git/index");
         try (FileWriter writer = new FileWriter(index, true)) {
             writer.write(type + " " + hash + " " + path + "\n");
         } catch (IOException e) {

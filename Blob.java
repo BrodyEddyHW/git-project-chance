@@ -7,7 +7,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class Blob {
     String fileName, fileContents, hash;
-    boolean compression = true;
+    boolean compression = false;
 
     public Blob(String inputFile) throws IOException {
         fileName = inputFile;
@@ -17,7 +17,7 @@ public class Blob {
         fileContents = getFileContents(inputFile);
         hash = hashContents();
         copyFileToObjects();
-        writeToIndexFile(inputFile, inputFile);
+        writeToIndexFile();
     }
 
     // Efficiently read file contents using StringBuilder and correct newline character
@@ -63,10 +63,10 @@ public class Blob {
     }
 
     //modified the method to apply to part one
-    public void writeToIndexFile(String type, String path) throws IOException {
-        File index = new File("index");
+    public void writeToIndexFile() throws IOException {
+        File index = new File("git" + File.separator + "index");
         try (FileWriter writer = new FileWriter(index, true)) {
-            writer.write(type + " " + hash + " " + path + "\n");
+            writer.write(hash + " " + fileName + "\n");
         } catch (IOException e) {
             e.printStackTrace();
         }

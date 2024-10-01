@@ -12,8 +12,7 @@ public class Git {
         }
         else {
             new File("git" + File.separator + "objects").mkdirs();
-            File directory = new File ("git");
-            File index = new File(directory, "index");
+            File index = new File("git" + File.separator + "index");
             index.createNewFile();  // Create the index file
             System.out.println("Git Repository initialized");
         }

@@ -16,8 +16,11 @@ public class GitTester {
         Git.deleteRepo();
         Git.initRepo();
         File gitFolder = new File("git");
+        gitFolder.mkdir();
         File objectsFolder = new File("git" + File.separator + "objects");
+        objectsFolder.mkdir();
         File index = new File("git" + File.separator + "index");
+        index.createNewFile();
         if (gitFolder.exists() && objectsFolder.exists() && index.exists()) {
             System.out.println("initRepo() works");
         } 
