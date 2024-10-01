@@ -4,6 +4,7 @@ import java.io.IOException;
 public class Git {
     public static void main(String[] args) throws IOException {
         initRepo();
+        deleteRepo();
     }
     public static void initRepo () throws IOException {
         if (new File("git" + File.separator + "objects").exists() && new File("git", "index").exists()) {
@@ -13,10 +14,11 @@ public class Git {
             new File("git" + File.separator + "objects").mkdirs();
             File directory = new File ("git");
             File index = new File(directory, "index");
-            index.createNewFile();
+            index.createNewFile();  // Create the index file
+            System.out.println("Git Repository initialized");
         }
     }
-    
+
     public static void deleteRepo() {
         File objects = new File("git" + File.separator + "objects");
         File index = new File("git", "index");
@@ -30,12 +32,14 @@ public class Git {
         }
     }
 
-    public static void deleteDirectory(File directory) {
-        if (directory.isDirectory()) {
-            File[] files = directory.listFiles();
-            if (files != null) {
-                for (int i = 0; i < files.length; i++) {
-                    deleteDirectory(files[i]);
+    // deletes a directory and the contents inside using recursion
+    private static void deleteDirectory(File directory) {
+        File[] files = directory.listFiles();
+        if (files != null) { 
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteDirectory(file); 
+                } else {
                 }
             }
         }

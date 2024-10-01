@@ -6,10 +6,10 @@ import java.nio.file.Paths;
 
 public class GitTester {
     public static void main(String[] args) throws IOException {
-            testInitRepo();
-            testCreateBlob();
-            Git.deleteRepo();
-            new File("test.txt").delete();
+        testInitRepo();
+        testCreateBlob();
+        Git.deleteRepo();
+        new File("test.txt").delete();
     }
 
     public static void testInitRepo() throws IOException {
