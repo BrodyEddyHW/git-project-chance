@@ -41,6 +41,9 @@ public class Tree {
         if (!parent.isEmpty()) {
             contents += "parent: " + parent + "\n";
         }
+        else {
+            contents += "parent: \n";
+        }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //from google
         String date = sdf.format(new Date());
         contents += "author: " + author + "\n";

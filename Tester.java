@@ -18,6 +18,9 @@ public class Tester {
 
         String commitHash = tree.commit("Chance", "My first commit. Yipee.");
         System.out.println("Commit created with hash: " + commitHash);
+
+        String commitHash2 = tree.commit("Chance", "Second commit");
+        System.out.println("Commit created with hash: " + commitHash2);
     }
 
     public static void testInitRepo() throws IOException {
