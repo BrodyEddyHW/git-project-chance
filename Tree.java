@@ -2,8 +2,52 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Tree {
+    //makes a commit file and puts it in the objects folder, also makes a head file which stores the head
+    public String commit(String author, String message) throws IOException {
+        File rootDir = new File("git/objects/root");
+        rootDir.mkdir();
+        String rootTreeHash = addDirectory(rootDir.getPath());
+        File headFile = new File("git/HEAD");
+        String parent = "";
+        if (headFile.exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(headFile))) {
+                parent = reader.readLine();
+            }
+        }
+        String content = makeCommit(rootTreeHash, parent, author, message);
+        String commitHash = hashContents(content);
+        File commitFile = new File("git/objects/" + commitHash);
+        commitFile.getParentFile().mkdirs();
+        try (Writer writer = new FileWriter(commitFile)) {
+            writer.write(content);
+            writer.close();
+        }
+        try (FileWriter writer = new FileWriter(headFile)) {
+            writer.write(commitHash);
+            writer.close();
+        }
+        rootDir.delete();
+        return commitHash;
+    }
+
+    //makes a string of what goes inside the commit
+    private String makeCommit(String treeHash, String parent, String author, String message) {
+        String contents = "";
+        contents += "tree: " + treeHash + "\n";
+        if (!parent.isEmpty()) {
+            contents += "parent: " + parent + "\n";
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //from google
+        String date = sdf.format(new Date());
+        contents += "author: " + author + "\n";
+        contents += "date: " + date + "\n";
+        contents += "message: " + message + "\n";
+        return contents;
+    }
     
     // Method to add a directory and recursively create blobs and trees
     public String addDirectory(String directoryPath) throws IOException {
