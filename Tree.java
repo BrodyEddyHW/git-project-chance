@@ -11,6 +11,7 @@ public class Tree {
         File rootDir = new File("git/objects/root");
         rootDir.mkdir();
         String rootTreeHash = addDirectory(rootDir.getPath());
+        rootDir.delete();
         File headFile = new File("git/HEAD");
         String parent = "";
         if (headFile.exists()) {
@@ -30,7 +31,6 @@ public class Tree {
             writer.write(commitHash);
             writer.close();
         }
-        rootDir.delete();
         return commitHash;
     }
 
