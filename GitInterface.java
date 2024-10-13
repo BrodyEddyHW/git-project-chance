@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 public interface GitInterface {
 
     /**
@@ -16,7 +18,7 @@ public interface GitInterface {
      * @param message The commit message describing the changes.
      * @return The SHA1 hash of the new commit.
      */
-    String commit(String author, String message);
+    String commit(String author, String message) throws IOException;
 
     /**
      * EXTRA CREDIT: Checks out a specific commit given its hash.

@@ -5,7 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Tree {
+public class Tree implements GitInterface {
     //makes a commit file and puts it in the objects folder, also makes a head file which stores the head
     public String commit(String author, String message) throws IOException {
         File rootDir = new File("git/objects/root");
@@ -19,7 +19,7 @@ public class Tree {
                 parent = reader.readLine();
             }
         }
-        String content = makeCommit(rootTreeHash, parent, author, message);
+        String content = stage(rootTreeHash, parent, author, message);
         String commitHash = hashContents(content);
         File commitFile = new File("git/objects/" + commitHash);
         commitFile.getParentFile().mkdirs();
@@ -35,7 +35,7 @@ public class Tree {
     }
 
     //makes a string of what goes inside the commit
-    private String makeCommit(String treeHash, String parent, String author, String message) {
+    private String stage(String treeHash, String parent, String author, String message) {
         String contents = "";
         contents += "tree: " + treeHash + "\n";
         if (!parent.isEmpty()) {
@@ -177,5 +177,17 @@ public class Tree {
             hexString.append(hex);
         }
         return hexString.toString();
+    }
+
+    @Override
+    public void stage(String filePath) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'stage'");
+    }
+
+    @Override
+    public void checkout(String commitHash) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'checkout'");
     }
 }

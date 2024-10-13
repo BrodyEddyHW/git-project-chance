@@ -4,11 +4,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class Tester {
+public class FinalTester {
     public static void main(String[] args) throws IOException {
         testInitRepo();
         testCreateBlob();
-        Git.deleteRepo();
         new File("test.txt").delete();
 
         String root = "testRoot";
@@ -16,6 +15,7 @@ public class Tester {
         Tree tree = new Tree();
         tree.addDirectory(root);
 
+        System.out.println("\n");
         String commitHash = tree.commit("Chance", "My first commit. Yipee.");
         System.out.println("Commit created with hash: " + commitHash);
 
@@ -32,33 +32,35 @@ public class Tester {
         objectsFolder.mkdir();
         File index = new File("git" + File.separator + "index");
         index.createNewFile();
+        System.out.println("\nTest initRepo():");
         if (gitFolder.exists() && objectsFolder.exists() && index.exists()) {
-            System.out.println("initRepo() works");
+            System.out.println("\t-initRepo() works");
         } 
         else {
-            System.out.println("initRepo() doesn't work");
+            System.out.println("\t-initRepo() doesn't work");
         }
     }
 
     public static void testCreateBlob() throws IOException {
-        Git.initRepo();
         FileWriter writer = new FileWriter("test.txt");
         writer.append("hello world");
         writer.close();
         Blob blob = new Blob("test.txt");
         File blobFile = new File("git" + File.separator + "objects" + File.separator + blob.getHash());
+        System.out.println("\nTest blob generation:");
         if (blobFile.exists()) {
-            System.out.println("Blob works");
+            System.out.println("\t-Blob works");
         } 
         else {
-            System.out.println("Blob doesn't work");
+            System.out.println("\t-Blob doesn't work");
         }
         String content = Blob.getFileContents("test.txt");
+        System.out.println("\nTest blob content:");
         if (content.equals("hello world")) {
-            System.out.println("Blob content works");
+            System.out.println("\t-Blob content works");
         } 
         else {
-            System.out.println("Blob content doesn't work");
+            System.out.println("\t-Blob content doesn't work");
         }
     }
 
