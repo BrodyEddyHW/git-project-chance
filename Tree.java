@@ -6,52 +6,72 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Tree implements GitInterface {
-    //makes a commit file and puts it in the objects folder, also makes a head file which stores the head
-    public String commit(String author, String message) throws IOException {
-        File rootDir = new File("git/objects/root");
-        rootDir.mkdir();
-        String rootTreeHash = addDirectory(rootDir.getPath());
-        rootDir.delete();
-        File headFile = new File("git/HEAD");
-        String parent = "";
-        if (headFile.exists()) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(headFile))) {
-                parent = reader.readLine();
+    //Stages a file for the next commit.
+    public void stage(String filePath) {
+        try {
+            File file = new File(filePath);
+            if (!file.exists()) {
+                throw new IllegalArgumentException("File does not exist: " + filePath);
             }
+            String blobHash = createBlob(file);
+            writeToIndexFile("blob", file.getPath(), blobHash);
+            File directory = file.getParentFile();
+            while (directory != null) {
+                String treeHash = addDirectory(directory.getPath());
+                writeToIndexFile("tree", directory.getPath(), treeHash);
+                directory = directory.getParentFile();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        String content = stage(rootTreeHash, parent, author, message);
-        String commitHash = hashContents(content);
+    }
+
+    //Method to create a commit with the given author and message
+    public String commit(String author, String message) throws IOException {
+        File directory = new File("git/objects/root");
+        directory.mkdirs();
+        String rootTreeHash = addDirectory("git/objects/root");
+        String parentHash = readHead();
+        String commitContent = createCommitContent(author, message, rootTreeHash, parentHash);
+        String commitHash = hashContents(commitContent);
         File commitFile = new File("git/objects/" + commitHash);
         commitFile.getParentFile().mkdirs();
         try (Writer writer = new FileWriter(commitFile)) {
-            writer.write(content);
-            writer.close();
+            writer.write(commitContent);
         }
-        try (FileWriter writer = new FileWriter(headFile)) {
+        File headFile = new File("git/HEAD");
+        try (Writer writer = new FileWriter(headFile)) {
             writer.write(commitHash);
-            writer.close();
         }
+        directory.delete();
         return commitHash;
     }
-
-    //makes a string of what goes inside the commit
-    private String stage(String treeHash, String parent, String author, String message) {
-        String contents = "";
-        contents += "tree: " + treeHash + "\n";
-        if (!parent.isEmpty()) {
-            contents += "parent: " + parent + "\n";
-        }
-        else {
-            contents += "parent: \n";
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //from google
-        String date = sdf.format(new Date());
-        contents += "author: " + author + "\n";
-        contents += "date: " + date + "\n";
-        contents += "message: " + message + "\n";
-        return contents;
-    }
     
+    private String createCommitContent(String author, String message, String treeHash, String parentHash) {
+        String commitContent = "";
+        commitContent += "tree: " + treeHash + "\n";
+        if (parentHash != null)
+          commitContent += "parent: " + parentHash + "\n";
+        else
+        commitContent += "parent: \n";
+        commitContent += "author: " + author + "\n";
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
+        commitContent += "date: " + sdf.format(new Date()) + "\n";
+        commitContent += "message: " + message + "\n";
+        return commitContent;
+    }
+
+    //reads current head commit hash
+    private String readHead() throws IOException {
+        File headFile = new File("git/HEAD");
+        if (!headFile.exists())
+            return null;
+        try (BufferedReader reader = new BufferedReader(new FileReader(headFile))) {
+            return reader.readLine().trim();
+        }
+    }
+
     // Method to add a directory and recursively create blobs and trees
     public String addDirectory(String directoryPath) throws IOException {
         File directory = new File(directoryPath);
@@ -177,12 +197,6 @@ public class Tree implements GitInterface {
             hexString.append(hex);
         }
         return hexString.toString();
-    }
-
-    @Override
-    public void stage(String filePath) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'stage'");
     }
 
     @Override
